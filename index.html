@@ -1,164 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Simple Store (GA4 Demo)</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>  XXXXXX </title>
 
-<!-- ✅ Replace with YOUR GA4 Measurement ID -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-BSJGMC0N8V"></script>
-<script>
-window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', 'G-BSJGMC0N8V');
-</script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-BSJGMC0N8V"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-BSJGMC0N8V'); 
+  </script>
 
-<style>
-body {
-  font-family: Arial;
-  text-align: center;
-  background: #f4f4f4;
-}
-
-h1 { margin-top: 20px; }
-
-.container {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.product {
-  border: 1px solid #ccc;
-  background: white;
-  padding: 15px;
-  margin: 10px;
-  width: 200px;
-  border-radius: 8px;
-}
-
-button {
-  background: green;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  cursor: pointer;
-  margin-top: 10px;
-}
-
-#cart {
-  margin-top: 20px;
-  padding: 15px;
-  background: white;
-  display: inline-block;
-}
-
-#paymentBox {
-  display: none;
-  margin-top: 20px;
-  padding: 20px;
-  background: #ddd;
-}
-</style>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    header {
+      background-color: #333;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+    .container {
+      padding: 20px;
+    }
+    .book {
+      background: white;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 5px;
+    }
+    button {
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
 </head>
-
 <body>
 
-<h1>My Simple Store</h1>
-
+<header>
+  <h1> XXXXXXXXX </h1>
+</header>
 <div class="container">
-
-  <div class="product">
-    <h3>Smart Watch</h3>
-    <p>₹2500</p>
-    <button onclick="addToCart('SW01','Smart Watch',2500)">Add</button>
+  <div class="XXXX">
+    <h2>XXXXX</h2>
+    <p>Price: ₹0</p>
+    <button onclick="trackClick()">Buy Now</button>
   </div>
-
-  <div class="product">
-    <h3>Bluetooth Speaker</h3>
-    <p>₹1800</p>
-    <button onclick="addToCart('BS02','Speaker',1800)">Add</button>
+  <div class="XXXX">
+    <h2>XXXXX </h2>
+    <p>Price: ₹0</p>
+    <button onclick="trackClick()">Buy Now</button>
   </div>
-
-  <div class="product">
-    <h3>Earbuds</h3>
-    <p>₹3200</p>
-    <button onclick="addToCart('EB03','Earbuds',3200)">Add</button>
-  </div>
-
-</div>
-
-<div id="cart">
-  <h3>Cart</h3>
-  <ul id="cartItems"></ul>
-  <p>Total: ₹<span id="total">0</span></p>
-  <button onclick="checkout()">Checkout</button>
-</div>
-
-<div id="paymentBox">
-  <h3>Dummy Payment</h3>
-  <p>Total: ₹<span id="payTotal"></span></p>
-  <input type="text" id="card" placeholder="Enter Card"><br><br>
-  <button onclick="pay()">Pay</button>
 </div>
 
 <script>
-let cart = [];
-let total = 0;
-
-function addToCart(id, name, price) {
-  cart.push({id, name, price});
-  total += price;
-
-  document.getElementById("cartItems").innerHTML += 
-    `<li>${name} - ₹${price}</li>`;
-  document.getElementById("total").innerText = total;
-
-  // GA Event
-  gtag('event', 'add_to_cart', {
-    currency: 'INR',
-    value: price,
-    items: [{ item_id: id, item_name: name }]
-  });
-}
-
-function checkout() {
-  if(cart.length === 0){
-    alert("Cart empty!");
-    return;
-  }
-
-  document.getElementById("paymentBox").style.display = "block";
-  document.getElementById("payTotal").innerText = total;
-}
-
-function pay() {
-  let card = document.getElementById("card").value.trim();
-
-  if(card === "1111") {
-    alert("Payment Success!");
-
-    gtag('event', 'purchase', {
-      transaction_id: "T" + Date.now(),
-      value: total,
-      currency: "INR"
+  function trackClick() {
+    gtag('event', 'purchase_click', {
+      event_category: 'engagement',
+      event_label: 'Buy Button Click'
     });
-
-    cart = [];
-    total = 0;
-    document.getElementById("cartItems").innerHTML = "";
-    document.getElementById("total").innerText = "0";
-    document.getElementById("paymentBox").style.display = "none";
-
-  } else {
-    alert("Payment Failed!");
-
-    gtag('event', 'payment_failed', {
-      value: total
-    });
+    alert("Button Click Tracked!");
   }
-}
 </script>
-
 </body>
 </html>
+

@@ -2,85 +2,162 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ecommerce Test</title>
+<title>Simple Store (GA4 Demo)</title>
+
+<!-- ✅ Replace with YOUR GA4 Measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-BSJGMC0N8V"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-BSJGMC0N8V');
+</script>
+
 <style>
-body{font-family:Arial;margin:0;background:#f5f5f5}
-header{background:#111;color:#fff;padding:15px;text-align:center}
-.container{display:flex;flex-wrap:wrap;gap:20px;padding:20px;justify-content:center}
-.card{background:#fff;border-radius:8px;box-shadow:0 2px 5px rgba(0,0,0,0.1);width:200px;padding:15px;text-align:center}
-.card img{width:100%;border-radius:8px}
-button{background:#111;color:#fff;border:none;padding:10px 15px;margin-top:10px;cursor:pointer;border-radius:5px}
-button:hover{background:#444}
-#cart{position:fixed;top:0;right:0;background:#fff;width:250px;height:100%;box-shadow:-2px 0 5px rgba(0,0,0,0.2);padding:15px;overflow:auto}
-h3{margin-top:0}
-.item{border-bottom:1px solid #ddd;padding:5px 0}
-.total{font-weight:bold;margin-top:10px}
+body {
+  font-family: Arial;
+  text-align: center;
+  background: #f4f4f4;
+}
+
+h1 { margin-top: 20px; }
+
+.container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.product {
+  border: 1px solid #ccc;
+  background: white;
+  padding: 15px;
+  margin: 10px;
+  width: 200px;
+  border-radius: 8px;
+}
+
+button {
+  background: green;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+#cart {
+  margin-top: 20px;
+  padding: 15px;
+  background: white;
+  display: inline-block;
+}
+
+#paymentBox {
+  display: none;
+  margin-top: 20px;
+  padding: 20px;
+  background: #ddd;
+}
 </style>
 </head>
+
 <body>
 
-<header>
-<h1>Store</h1>
-</header>
+<h1>My Simple Store</h1>
 
-<div class="container" id="products"></div>
+<div class="container">
+
+  <div class="product">
+    <h3>Smart Watch</h3>
+    <p>₹2500</p>
+    <button onclick="addToCart('SW01','Smart Watch',2500)">Add</button>
+  </div>
+
+  <div class="product">
+    <h3>Bluetooth Speaker</h3>
+    <p>₹1800</p>
+    <button onclick="addToCart('BS02','Speaker',1800)">Add</button>
+  </div>
+
+  <div class="product">
+    <h3>Earbuds</h3>
+    <p>₹3200</p>
+    <button onclick="addToCart('EB03','Earbuds',3200)">Add</button>
+  </div>
+
+</div>
 
 <div id="cart">
-<h3>Cart</h3>
-<div id="cartItems"></div>
-<div class="total" id="total">Total: ₹0</div>
+  <h3>Cart</h3>
+  <ul id="cartItems"></ul>
+  <p>Total: ₹<span id="total">0</span></p>
+  <button onclick="checkout()">Checkout</button>
+</div>
+
+<div id="paymentBox">
+  <h3>Dummy Payment</h3>
+  <p>Total: ₹<span id="payTotal"></span></p>
+  <input type="text" id="card" placeholder="Enter Card"><br><br>
+  <button onclick="pay()">Pay</button>
 </div>
 
 <script>
-const products=[
-{id:1,name:"Product A",price:500,img:"https://via.placeholder.com/200"},
-{id:2,name:"Product B",price:700,img:"https://via.placeholder.com/200"},
-{id:3,name:"Product C",price:900,img:"https://via.placeholder.com/200"}
-];
+let cart = [];
+let total = 0;
 
-const cart=[];
+function addToCart(id, name, price) {
+  cart.push({id, name, price});
+  total += price;
 
-function renderProducts(){
-const container=document.getElementById("products");
-products.forEach(p=>{
-const div=document.createElement("div");
-div.className="card";
-div.innerHTML=`<img src="${p.img}"><h4>${p.name}</h4><p>₹${p.price}</p><button onclick="addToCart(${p.id})">Add to Cart</button>`;
-container.appendChild(div);
-});
+  document.getElementById("cartItems").innerHTML += 
+    `<li>${name} - ₹${price}</li>`;
+  document.getElementById("total").innerText = total;
+
+  // GA Event
+  gtag('event', 'add_to_cart', {
+    currency: 'INR',
+    value: price,
+    items: [{ item_id: id, item_name: name }]
+  });
 }
 
-function addToCart(id){
-const product=products.find(p=>p.id===id);
-cart.push(product);
-updateCart();
-gtag('event','add_to_cart',{currency:'INR',value:product.price,items:[{item_id:product.id,item_name:product.name}]});
+function checkout() {
+  if(cart.length === 0){
+    alert("Cart empty!");
+    return;
+  }
+
+  document.getElementById("paymentBox").style.display = "block";
+  document.getElementById("payTotal").innerText = total;
 }
 
-function updateCart(){
-const cartItems=document.getElementById("cartItems");
-cartItems.innerHTML="";
-let total=0;
-cart.forEach(item=>{
-total+=item.price;
-const div=document.createElement("div");
-div.className="item";
-div.innerText=item.name+" - ₹"+item.price;
-cartItems.appendChild(div);
-});
-document.getElementById("total").innerText="Total: ₹"+total;
+function pay() {
+  let card = document.getElementById("card").value.trim();
+
+  if(card === "1111") {
+    alert("Payment Success!");
+
+    gtag('event', 'purchase', {
+      transaction_id: "T" + Date.now(),
+      value: total,
+      currency: "INR"
+    });
+
+    cart = [];
+    total = 0;
+    document.getElementById("cartItems").innerHTML = "";
+    document.getElementById("total").innerText = "0";
+    document.getElementById("paymentBox").style.display = "none";
+
+  } else {
+    alert("Payment Failed!");
+
+    gtag('event', 'payment_failed', {
+      value: total
+    });
+  }
 }
-
-renderProducts();
-</script>
-
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-BSJGMC0N8V"></script>
-<script>
-window.dataLayer=window.dataLayer||[];
-function gtag(){dataLayer.push(arguments);}
-gtag('js',new Date());
-gtag('config','G-BSJGMC0N8V');
 </script>
 
 </body>
